@@ -1,5 +1,5 @@
 param(
-  [string]$OutputDirectory = "dist/companion",
+  [string]$OutputDirectory = "dist/itch-companion",
   [string]$Version = "1.2.0"
 )
 
