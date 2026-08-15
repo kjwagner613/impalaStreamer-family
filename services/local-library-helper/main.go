@@ -28,6 +28,11 @@ const (
 	serviceName    = "Impala Local Library Helper"
 )
 
+var (
+	buildVersion = "development"
+	buildCommit  = "unknown"
+)
+
 type track struct {
 	ID          string `json:"id"`
 	Artist      string `json:"artist"`
@@ -229,7 +234,12 @@ func (state *serverState) pruneVoiceSyncCache(keepPath string) {
 }
 
 func configuredAllowedOrigins() []string {
-	origins := []string{"https://impala.discrete-dev.com", "http://localhost:*", "http://127.0.0.1:*"}
+	origins := []string{
+		"https://impala.discrete-dev.com",
+		"https://impala-fam.discrete-dev.com",
+		"http://localhost:*",
+		"http://127.0.0.1:*",
+	}
 	for _, value := range strings.Split(os.Getenv("IMPALA_HELPER_ALLOWED_ORIGINS"), ",") {
 		value = strings.TrimSpace(strings.TrimRight(value, "/"))
 		if value != "" {
@@ -1118,6 +1128,8 @@ func (state *serverState) healthHandler(w http.ResponseWriter, r *http.Request) 
 	writeJSON(w, map[string]any{
 		"ok":                    true,
 		"service":               serviceName,
+		"version":               buildVersion,
+		"commit":                buildCommit,
 		"root":                  state.musicRoot,
 		"trackCount":            len(state.tracks),
 		"mediaTools":            state.mediaTools,

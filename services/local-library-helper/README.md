@@ -31,12 +31,14 @@ The project release builder tests the Companion and produces native executables
 for Windows, macOS, and Linux on both Intel/AMD and ARM64 systems:
 
 ```powershell
-.\scripts\build-companion-releases.ps1
+.\scripts\build-companion-releases.ps1 -Version 1.2.0
 ```
 
-Packages are written to `dist/companion`. The GitHub Actions **Companion
-releases** workflow builds the same six targets when run manually. Pushing a tag
-such as `companion-v1.1.0` also publishes the executables on a GitHub Release.
+Packages are written to `dist/itch-companion/v1.2.0` as six independent itch.io
+channels. Windows receives a portable executable, macOS receives a native app
+bundle, and Linux receives a portable executable. Every channel includes an
+itch app manifest and install instructions. See `PACKAGING.md` for validation
+and publishing.
 
 Suggested pilot install folder:
 

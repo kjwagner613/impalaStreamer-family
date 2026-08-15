@@ -17,6 +17,20 @@ func TestOriginMatchesExactProductionOrigin(t *testing.T) {
 	}
 }
 
+func TestConfiguredOriginsIncludeFamilyEdition(t *testing.T) {
+	origins := configuredAllowedOrigins()
+	found := false
+	for _, origin := range origins {
+		if origin == "https://impala-fam.discrete-dev.com" {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatal("expected the family Impala origin to be trusted by the packaged Companion")
+	}
+}
+
 func TestOriginMatchesLocalPreviewPort(t *testing.T) {
 	if !originMatches("http://127.0.0.1:5500", "http://127.0.0.1:*") {
 		t.Fatal("expected a numeric local preview port to match")

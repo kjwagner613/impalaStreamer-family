@@ -5,6 +5,9 @@ Designed for clarity, predictability, and zero hidden side‑effects.
 Impala Streamer is a static frontend + a private signer API.  
 Each instance maintains its own **auth session**, **preferences**, and **playlist storage**, ensuring isolation between deployments.
 
+For the local-first owner setup, free GitHub Pages hosting, itch.io Companion
+builds, and optional MEGA cloud configuration, see [PACKAGING.md](PACKAGING.md).
+
 ---
 
 # **Project Structure**
