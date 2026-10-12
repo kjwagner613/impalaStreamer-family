@@ -1,4 +1,13 @@
 const songs = [
+        {
+        "name": "Pink Pony Club",
+        "artist": "Chappell Roan",
+        "album": "!A-singleSongs",
+        "objectKey": "!A-singleSongs/Chappell Roan/Pink Pony Club.opus",
+        "play": true,
+        "mediaType": "audio",
+        "source": "s4"
+    },
     {
         "name": "Turles All The Way Down",
         "artist": "Sturgill Simpson",
@@ -11,7 +20,7 @@ const songs = [
     {
         "name": "Made of Stone",
         "artist": "The Stone Roses",
-        "album": "CD 1- 2009 Remaster",
+        "album": "!A-singleSongs",
         "objectKey": "The Stone Roses/CD 1- 2009 Remaster/08  - Made Of Stone.mp3",
         "play": true,
         "mediaType": "audio",
