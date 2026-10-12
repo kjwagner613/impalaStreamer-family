@@ -12,7 +12,7 @@ const songs = [
         "name": "Made of Stone",
         "artist": "The Stone Roses",
         "album": "CD 1- 2009 Remaster",
-        "objectKey": "The Stone Roses/CD 1- 2009 Remaster/08  - Made Of Stone.opus",
+        "objectKey": "The Stone Roses/CD 1- 2009 Remaster/08  - Made Of Stone.mp3",
         "play": true,
         "mediaType": "audio",
         "source": "s4"
