@@ -54,6 +54,7 @@ const PlaylistStore = (() => {
       album: String(source.album || ""),
       file: String(source.file || ""),
       objectKey: String(source.objectKey || ""),
+      subtitleObjectKey: String(source.subtitleObjectKey || ""),
       mediaType: String(source.mediaType || source.kind || ""),
       contentType: String(source.contentType || ""),
       source: String(source.source || ""),
@@ -332,6 +333,7 @@ const PlaylistStore = (() => {
               album: clonedSong.album,
               file: clonedSong.file,
               objectKey: clonedSong.objectKey,
+              subtitleObjectKey: clonedSong.subtitleObjectKey,
               mediaType: clonedSong.mediaType,
               contentType: clonedSong.contentType,
               source: clonedSong.source

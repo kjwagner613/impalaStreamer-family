@@ -65,7 +65,7 @@ heroku config:set S4_VIDEO_PRIVATE_PREFIXES=test/
 
 The restriction is enforced for index and live listings, searches, recursive imports, and signed media URLs. Non-admin users receive no listing results and cannot access a private object by guessing its key.
 
-The index builder writes one record per media object. The web process keeps the existing `/api/library` folders/files/pagination contract, applies every user's `allowedPrefixes`, and never sends the complete manifest to the browser.
+The index builder writes one record per media object. For videos, it also records an optional `.srt` sidecar when the subtitle has the exact same base name and folder as the video (for example, `Film.mp4` and `Film.srt`). Rebuild the video index after adding sidecars. The signer converts an authorized sidecar to WebVTT for the browser's native subtitle controls. The web process keeps the existing `/api/library` folders/files/pagination contract, applies every user's `allowedPrefixes`, and never sends the complete manifest to the browser.
 
 `GET /api/index-version?media=audio` is authenticated and reports cache versions and record counts. `/healthz` reports the same in-memory status without loading an index.
 

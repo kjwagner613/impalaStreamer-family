@@ -25,9 +25,30 @@ export async function buildLibraryIndex({ s3Client, scope }) {
   let continuationToken;
   let count = 0;
   const videoTitleKeys = new Set();
+  const subtitleKeys = new Map();
   const excludedPrefixes = (scope.excludedPrefixes || []).map(normalizeScanPrefix).filter(Boolean);
 
   try {
+    // Collect sidecar keys first so their order in S3 listing pages does not
+    // affect pairing with the video record.
+    if (scope.name === "video") {
+      let subtitleContinuationToken;
+      do {
+        const page = await s3Client.send(new ListObjectsV2Command({
+          Bucket: scope.bucket,
+          Prefix: scope.prefix,
+          ContinuationToken: subtitleContinuationToken
+        }));
+        for (const object of page.Contents || []) {
+          const key = String(object.Key || "");
+          if (/\.srt$/i.test(key) && !isExcludedObjectKey(key, scope.prefix, excludedPrefixes)) {
+            subtitleKeys.set(key.toLowerCase(), key);
+          }
+        }
+        subtitleContinuationToken = page.IsTruncated ? page.NextContinuationToken : undefined;
+      } while (subtitleContinuationToken);
+    }
+
     do {
       const page = await s3Client.send(new ListObjectsV2Command({
         Bucket: scope.bucket,
@@ -57,6 +78,13 @@ export async function buildLibraryIndex({ s3Client, scope }) {
           size: Number(object.Size || 0),
           modified: object.LastModified ? new Date(object.LastModified).toISOString() : null
         };
+        if (scope.name === "video") {
+          const subtitleKey = objectKey.replace(/\.[^.]+$/, ".srt");
+          const matchingSubtitleKey = subtitleKeys.get(subtitleKey.toLowerCase());
+          if (matchingSubtitleKey) {
+            record.subtitleObjectKey = matchingSubtitleKey;
+          }
+        }
 
         if (!output.write(`${JSON.stringify(record)}\n`)) {
           await once(output, "drain");

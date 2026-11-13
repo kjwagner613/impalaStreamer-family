@@ -7,6 +7,7 @@ import { GetObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/clien
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { buildLibraryIndexes, normalizeScanPrefix } from "./index-builder.js";
 import { createLibraryIndexCache, queryLibraryIndex } from "./library-index.js";
+import { srtToWebVtt } from "./subtitles.js";
 import {
   canUserAccessBucket,
   getAllowedBuckets,
@@ -389,6 +390,41 @@ app.get("/api/media-url", requireAuth, async (request, response) => {
   } catch (error) {
     console.error("Unable to sign media URL:", error);
     response.status(500).json({ error: "Unable to sign media URL." });
+  }
+});
+
+app.get("/api/subtitle", requireAuth, async (request, response) => {
+  const objectKey = String(request.query.key || "");
+  const mediaScope = parseMediaScope(request.query.media);
+  const targetBucket = getBucketForScope(mediaScope);
+
+  if (mediaScope !== "video" || !/\.srt$/i.test(objectKey) || !isValidObjectKey(objectKey)) {
+    response.status(400).json({ error: "A valid SRT subtitle key is required." });
+    return;
+  }
+  if (!canUserAccessBucket(bucketRules, request.user.username, targetBucket)) {
+    response.status(403).json({ error: "That library bucket is not available to this user." });
+    return;
+  }
+  const allowedPrefixes = request.user.allowedPrefixes || [];
+  const excludedPrefixes = getExcludedPrefixes(mediaScope, request.user);
+  if ((allowedPrefixes.length && !allowedPrefixes.some((prefix) => objectKey.startsWith(prefix)))
+      || isExcludedForPrefixes(objectKey, excludedPrefixes)) {
+    response.status(403).json({ error: "That subtitle is outside your allowed library scope." });
+    return;
+  }
+
+  try {
+    const result = await s3Client.send(new GetObjectCommand({ Bucket: targetBucket, Key: objectKey }));
+    const srt = await result.Body.transformToString("utf-8");
+    response.set("Cache-Control", "private, no-store").json({ vtt: srtToWebVtt(srt) });
+  } catch (error) {
+    if (error?.name === "NoSuchKey" || error?.$metadata?.httpStatusCode === 404) {
+      response.status(404).json({ error: "Subtitle file not found." });
+      return;
+    }
+    console.error("Unable to load subtitle:", error);
+    response.status(500).json({ error: "Unable to load subtitle." });
   }
 });
 

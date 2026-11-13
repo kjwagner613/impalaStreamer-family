@@ -34,7 +34,15 @@
       return { url: payload.url, source: "cloud" };
     }
 
-    return { resolveCloudMedia };
+    async function loadCloudSubtitle(song) {
+      const subtitleKey = String(song?.subtitleObjectKey || "").trim();
+      if (!subtitleKey) return "";
+      const query = new URLSearchParams({ key: subtitleKey, media: "video" });
+      const payload = await request(`/api/subtitle?${query.toString()}`);
+      return String(payload?.vtt || "");
+    }
+
+    return { resolveCloudMedia, loadCloudSubtitle };
   }
 
   window.ImpalaCloudLibrary = { create };

@@ -270,6 +270,7 @@ function toFileEntry(recordOrKey) {
   const record = typeof recordOrKey === "string" ? { objectKey: recordOrKey } : (recordOrKey || {});
   const objectKey = String(record.objectKey || "");
   const entry = { name: getLeafName(objectKey), objectKey };
+  if (record.subtitleObjectKey) entry.subtitleObjectKey = record.subtitleObjectKey;
   if (record.metadataRef) entry.metadataRef = record.metadataRef;
   if (record.artworkOverride || record.posterOverride) {
     entry.artworkOverride = record.artworkOverride || record.posterOverride;

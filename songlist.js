@@ -1157,6 +1157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return {
       type: "file",
       objectKey: normalizedObjectKey,
+      subtitleObjectKey: String(options.subtitleObjectKey || "").trim(),
       name: String(options.name || options.title || "").trim() || parsedSong.name,
       artist: String(options.artist || "").trim() || parsedSong.artist,
       album: String(options.album || "").trim() || parsedSong.album,
@@ -1182,6 +1183,7 @@ document.addEventListener("DOMContentLoaded", () => {
       artist: String(entry.artist || "").trim() || parsedSong.artist,
       album: String(entry.album || "").trim() || parsedSong.album,
       objectKey,
+      subtitleObjectKey: String(entry.subtitleObjectKey || "").trim(),
       file: String(entry.file || "").trim(),
       mediaType: String(entry.mediaType || "").trim(),
       contentType: String(entry.contentType || "").trim(),
@@ -2108,6 +2110,7 @@ document.addEventListener("DOMContentLoaded", () => {
       file,
       mediaType,
       contentType,
+      subtitleObjectKey: String(song?.subtitleObjectKey || "").trim(),
       source
     };
   }
@@ -2469,6 +2472,7 @@ document.addEventListener("DOMContentLoaded", () => {
       file: String(song?.file || "").trim(),
       mediaType: String(song?.mediaType || song?.kind || "").trim(),
       contentType: String(song?.contentType || "").trim(),
+      subtitleObjectKey: String(song?.subtitleObjectKey || "").trim(),
       source: String(song?.source || "").trim(),
       play: song?.play === false ? false : ""
     }).reduce((portableSong, [key, value]) => {

@@ -408,6 +408,36 @@ document.addEventListener("DOMContentLoaded", () => {
   function clearAllMediaSources() {
     stopAndClearMediaElement(audioPlayer);
     stopAndClearMediaElement(videoPlayer);
+    clearVideoSubtitle();
+  }
+
+  let videoSubtitleUrl = "";
+  function clearVideoSubtitle() {
+    videoPlayer?.querySelectorAll?.('track[data-impala-subtitle="true"]')?.forEach((track) => track.remove());
+    if (videoSubtitleUrl) {
+      URL.revokeObjectURL(videoSubtitleUrl);
+      videoSubtitleUrl = "";
+    }
+  }
+
+  async function loadVideoSubtitle(song, loadGeneration) {
+    if (!videoPlayer || !song?.subtitleObjectKey || song?.source === "local-service") return;
+    try {
+      const vtt = await cloudLibraryController.loadCloudSubtitle(song);
+      if (!vtt || loadGeneration !== mediaLoadGeneration || activeMediaKind !== "video") return;
+      clearVideoSubtitle();
+      videoSubtitleUrl = URL.createObjectURL(new Blob([vtt], { type: "text/vtt" }));
+      const track = document.createElement("track");
+      track.dataset.impalaSubtitle = "true";
+      track.kind = "captions";
+      track.label = "Subtitles";
+      track.srclang = "und";
+      track.default = true;
+      track.src = videoSubtitleUrl;
+      videoPlayer.appendChild(track);
+    } catch (error) {
+      console.warn("Unable to load the cloud subtitle:", error.message);
+    }
   }
 
   function isLivePlaybackActive() {
@@ -1278,6 +1308,9 @@ document.addEventListener("DOMContentLoaded", () => {
       activeMediaElement.removeAttribute("src");
       activeMediaElement.src = resolvedMedia.url;
       activeMediaElement.load();
+      if (mediaInfo.mediaKind === "video" && song?.source !== "local-service") {
+        void loadVideoSubtitle(song, loadGeneration);
+      }
       mediaLoading = false;
       mediaSourceReady = true;
 
