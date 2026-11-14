@@ -15,8 +15,8 @@ window.KW_PLAYER_CONFIG = window.KW_PLAYER_CONFIG || {
   enabledBuiltInPlaylistIds: ["songs"],
   brandName: "Impala Streamer",
   editionName: "Impala Family Streamer",
-  appVersion: "1.2.0",
-  appBuildDate: "2026.08.13",
+  appVersion: "1.3.0",
+  appBuildDate: "2026.11.13",
   mkvPlaybackEnabled: true,
   localHelperDownloadUrl:
     "https://www.discrete-dev.com/downloads.html#impalaHelper",
